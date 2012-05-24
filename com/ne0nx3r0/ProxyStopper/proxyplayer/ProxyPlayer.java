@@ -1,4 +1,4 @@
-package proxyplayer;
+package com.ne0nx3r0.ProxyStopper.proxyplayer;
 
 import org.bukkit.entity.Player;
 

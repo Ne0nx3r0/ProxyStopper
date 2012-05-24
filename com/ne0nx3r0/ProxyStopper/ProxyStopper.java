@@ -1,7 +1,7 @@
 package com.ne0nx3r0.ProxyStopper;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import proxyplayer.ProxyPlayers;
+import com.ne0nx3r0.ProxyStopper.proxyplayer.ProxyPlayers;
 
 public class ProxyStopper extends JavaPlugin{
     public ProxyPlayers ppManager;
