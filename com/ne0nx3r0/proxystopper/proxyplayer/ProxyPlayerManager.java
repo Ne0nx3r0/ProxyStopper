@@ -25,7 +25,47 @@ public class ProxyPlayerManager{
             plugin.copy(plugin.getResource(whitelistFile.getName()), whitelistFile);
         }     
         
-        //TODO: Whitelist
+        int iMoveTicks = plugin.getConfig().getInt("move-ticks");
+        
+        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                for(ProxyPlayer pp : uncleanPlayers.values())
+                {
+                    Player player = pp.getPlayer();
+                    
+//Theoretically an extra protection from memory leaks.
+                    if(!player.isOnline())
+                    {
+                        uncleanPlayers.remove(player);
+                        
+                        continue;
+                    }
+                    
+                    if(pp.lastLocation == null)
+                    {
+                        pp.lastLocation = player.getLocation();
+                    }
+                    else if(pp.lastLocation != player.getLocation())
+                    {
+                        player.teleport(pp.lastLocation);
+                        
+                        if(ProxyStopper.BEFORE_CHECKED_MOVE && pp.status == ProxyPlayerStatus.UNCHECKED)
+                        {
+                            player.sendMessage(plugin.getMessagePrefix()
+                                    +"Please wait while your connection is verified.");
+                        }
+                        else if(ProxyStopper.AFTER_FOUND_DIRTY_MOVE && pp.status == ProxyPlayerStatus.DIRTY)
+                        {
+                            player.sendMessage(plugin.getMessagePrefix()
+                                    +"You cannot move while using a proxy to connect!");
+                        }
+                    }
+                }
+            }
+        }, iMoveTicks, iMoveTicks);
     }
     
     //Unclean!!! Unclean!!!

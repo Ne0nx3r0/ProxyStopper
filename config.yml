@@ -1,10 +1,19 @@
+#list of port numbers to check
+ports: 8080,80,81,1080,6588,8000,3128,553,554,4480
+
+# ticks between move checks, if enabled (20/second)
+move-ticks: 20
+  
+# If true notifies players who are OP or who have the proxystopper.admin permission about updates.
+notify-about-updates: true
+
 # When a player first joins
 before-checked:
   move: true
   chat: false
   interact: false
   commands: false
-  
+ 
 # How to treat a player after they are found to be dirty
 after-found-dirty:
   # Tell admins and the player

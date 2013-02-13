@@ -1,12 +1,14 @@
 package com.ne0nx3r0.proxystopper.proxyplayer;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class ProxyPlayer
 {
-    private Player player;
-    private int numOfPortsChecked = 0;
-    private ProxyPlayerStatus status;
+    Player player;
+    int numOfPortsChecked = 0;
+    ProxyPlayerStatus status;
+    Location lastLocation;
     
     ProxyPlayer(Player p)
     {

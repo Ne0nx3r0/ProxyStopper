@@ -21,7 +21,7 @@ class PortCheckThread implements Runnable
     @Override
     public void run()
     {
-            System.out.println("trying: "+pp.getAddress()+":"+port);
+        System.out.println("trying: "+pp.getAddress()+":"+port);
 
         try
         {
@@ -39,6 +39,7 @@ class PortCheckThread implements Runnable
         }
 
         System.out.println(pp.getAddress()+":"+port+" was closed");
+        
         checkedPort(pp,port,false);
     }
 
@@ -99,7 +100,7 @@ class PortCheckThread implements Runnable
         }
         else
         {
-            if(pp.getNumberOfCheckedPorts() == plugin.getProxyPorts().length 
+            if(pp.getNumberOfCheckedPorts() == plugin.getProxyPorts().size() 
             && pp.getStatus() == ProxyPlayerStatus.UNCHECKED)
             {
                 pp.setStatus(ProxyPlayerStatus.CLEAN);
@@ -109,7 +110,7 @@ class PortCheckThread implements Runnable
 
             pp.getPlayer().sendMessage(
                 plugin.getMessagePrefix()
-                +(pp.getNumberOfCheckedPorts() / plugin.getProxyPorts().length * 10)
+                +(pp.getNumberOfCheckedPorts() / plugin.getProxyPorts().size() * 10)
                 + "% verified");
         }
     }
