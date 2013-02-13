@@ -1,5 +1,5 @@
 name: ProxyStopper
-main: com.ne0nx3r0.ProxyStopper.ProxyStopper
+main: com.ne0nx3r0.proxystopper.ProxyStopper
 version: '0.1'
 database: false
 description: Attempts to fight (public) proxies
