@@ -37,7 +37,9 @@ public class ProxyPlayerManager{
         
         for(int port : plugin.getProxyPorts())
         {
-            new Thread(new PortCheckThread(plugin,pp,port)).start();
+            plugin.getServer().getScheduler().runTaskAsynchronously(
+                plugin,
+                new PortCheckThread(plugin,pp,port));
         }
     }
 

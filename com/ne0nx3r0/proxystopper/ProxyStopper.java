@@ -20,13 +20,13 @@ public class ProxyStopper extends JavaPlugin{
     boolean BEFORE_CHECKED_INTERACT;
     
     boolean AFTER_FOUND_DIRTY_MOVE;
-    boolean AFTER_FOUND_DIRTY_AUTOIPBAN;
-    boolean AFTER_FOUND_DIRTY_AUTOBAN;
-    boolean AFTER_FOUND_DIRTY_AUTOKICK;
-    boolean AFTER_FOUND_DIRTY_NOTIFY;
     boolean AFTER_FOUND_DIRTY_INTERACT;
     boolean AFTER_FOUND_DIRTY_COMMANDS;
     boolean AFTER_FOUND_DIRTY_CHAT;
+    public static boolean AFTER_FOUND_DIRTY_AUTOIPBAN;
+    public static boolean AFTER_FOUND_DIRTY_AUTOBAN;
+    public static boolean AFTER_FOUND_DIRTY_AUTOKICK;
+    public static boolean AFTER_FOUND_DIRTY_NOTIFY;
     
     @Override
     public void onEnable()

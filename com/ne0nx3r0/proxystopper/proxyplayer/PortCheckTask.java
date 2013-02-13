@@ -42,15 +42,58 @@ class PortCheckThread implements Runnable
         checkedPort(pp,port,false);
     }
 
-    private void checkedPort(ProxyPlayer pp,int port,boolean wasOpen)
-    {
-        if(wasOpen)
+    private void checkedPort(final ProxyPlayer pp,final int port,boolean wasOpen)
+    {        
+        if(wasOpen && pp.getStatus() == ProxyPlayerStatus.UNCHECKED)
         {
-            pp.setStatus(ProxyPlayerStatus.DIRTY);
-
             plugin.getLogger().log(Level.INFO, 
                     "{0} is using a proxy! (port {1} was open)", 
                     new Object[]{pp.getPlayer().getName(), port});
+            
+            pp.setStatus(ProxyPlayerStatus.DIRTY);
+            
+            plugin.getServer().getScheduler().runTask(plugin, new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    if(ProxyStopper.AFTER_FOUND_DIRTY_NOTIFY)
+                    {
+                        plugin.getServer().broadcast(
+                                plugin.getMessagePrefix()+pp.getPlayer().getName()+" has proxy port "+port+" open!",
+                                "proxystopper.admin");
+                    }
+                    if(ProxyStopper.AFTER_FOUND_DIRTY_AUTOBAN)
+                    {
+                        pp.getPlayer().setBanned(true);
+                        
+                        plugin.getServer().broadcast(
+                                plugin.getMessagePrefix()+pp.getPlayer().getName()+" was BANNED for having port "+port+" open!",
+                                "proxystopper.admin");
+                    }
+                    if(ProxyStopper.AFTER_FOUND_DIRTY_AUTOIPBAN)
+                    {
+                        plugin.getServer().banIP(pp.getAddress());
+                        
+                        plugin.getServer().broadcast(
+                                plugin.getMessagePrefix()+pp.getPlayer().getName()+" was IP BANNED ("+pp.getAddress()+") for having port "+port+" open!",
+                                "proxystopper.admin");
+                    }
+                    if(ProxyStopper.AFTER_FOUND_DIRTY_AUTOKICK)
+                    {
+                        plugin.getServer().broadcast(
+                                plugin.getMessagePrefix()+pp.getPlayer().getName()+" was KICKED for having port "+port+" open!",
+                                "proxystopper.admin");
+                    }
+                    
+                    if(ProxyStopper.AFTER_FOUND_DIRTY_AUTOKICK
+                    || ProxyStopper.AFTER_FOUND_DIRTY_AUTOBAN
+                    || ProxyStopper.AFTER_FOUND_DIRTY_AUTOIPBAN)
+                    {
+                        pp.getPlayer().kickPlayer("You appear to be using a proxy!");
+                    }
+                }
+            });
         }
         else
         {
