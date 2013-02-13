@@ -2,7 +2,7 @@ name: ProxyStopper
 main: com.ne0nx3r0.ProxyStopper.ProxyStopper
 version: '0.1'
 database: false
-description: Disables users using a proxy until an admin enables them
+description: Attempts to fight (public) proxies
 commands:
    ps:
       description: Proxy stopper commands

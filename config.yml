@@ -1,0 +1,25 @@
+# When a player first joins
+before-checked:
+  move: true
+  chat: false
+  interact: false
+  commands: false
+  
+# How to treat a player after they are found to be dirty
+after-found-dirty:
+  # Tell admins and the player
+  notify: true
+  # Whether player can still chat
+  chat: false
+  # Whether player can still do commands
+  commands: false
+  # Whether player can still interact with things
+  interact: false
+  # Whether player can still move
+  move: false
+# Kick player when they are found to be using a proxy
+  auto-kick: false
+# Ban player when they are found to be using a proxy
+  auto-ban: false
+# IP-Ban player when they are found to be using a proxy
+  auto-ip-Ban: false

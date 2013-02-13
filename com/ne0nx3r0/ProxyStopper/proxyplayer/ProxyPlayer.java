@@ -2,45 +2,44 @@ package com.ne0nx3r0.ProxyStopper.proxyplayer;
 
 import org.bukkit.entity.Player;
 
-public class ProxyPlayer{
+public class ProxyPlayer
+{
     private Player player;
-    private boolean clean = false;
-    
-    private boolean usingProxy = false;
     private int numOfPortsChecked = 0;
+    private ProxyPlayerStatus status;
     
-    ProxyPlayer(Player p){
+    ProxyPlayer(Player p)
+    {
         this.player = p;
     }
     
-    public boolean isClean(){
-        return this.clean;
-    }
-    
-    public String getAddress(){
+    public String getAddress()
+    {
         return player.getAddress().getAddress().getHostAddress();
     }
     
-    public void addCheckedPort(){
+    public void addCheckedPort()
+    {
         numOfPortsChecked++;
     }
     
-    public int getNumberOfCheckedPorts(){
+    public int getNumberOfCheckedPorts()
+    {
         return numOfPortsChecked;
     }
     
-    public void setClean(boolean clean){
-        this.clean = clean;
-    }
-    
-    public Player getPlayer(){
+    public Player getPlayer()
+    {
         return player;
     }
 
-    public boolean isUsingProxy(){
-        return usingProxy;
+    public ProxyPlayerStatus getStatus()
+    {
+        return this.status;
     }
-    public void setUsingProxy(boolean b) {
-        this.usingProxy = true;
+    
+    public void setStatus(ProxyPlayerStatus status)
+    {
+        this.status = status;
     }
 }
