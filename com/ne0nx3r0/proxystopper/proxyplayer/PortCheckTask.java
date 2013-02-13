@@ -90,6 +90,8 @@ class PortCheckThread implements Runnable
                     || ProxyStopper.AFTER_FOUND_DIRTY_AUTOBAN
                     || ProxyStopper.AFTER_FOUND_DIRTY_AUTOIPBAN)
                     {
+                        plugin.proxyPlayerManager.removeUncleanPlayer(pp.getPlayer());
+                        
                         pp.getPlayer().kickPlayer("You appear to be using a proxy!");
                     }
                 }
