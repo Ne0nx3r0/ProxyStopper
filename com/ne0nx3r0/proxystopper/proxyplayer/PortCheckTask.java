@@ -1,7 +1,10 @@
 package com.ne0nx3r0.proxystopper.proxyplayer;
 
 import com.ne0nx3r0.proxystopper.ProxyStopper;
+import java.io.IOException;
+import java.net.ConnectException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,29 +24,31 @@ class PortCheckThread implements Runnable
     @Override
     public void run()
     {
-        System.out.println("trying: "+pp.getAddress()+":"+port);
+        //System.out.println("trying: "+pp.getAddress()+":"+port);
 
         try
         {
             Socket ServerSok = new Socket(pp.getAddress(),port);
 
             plugin.getLogger().log(Level.INFO,pp.getAddress()+":"+port+" was open");
+            
             checkedPort(pp,port,true);
 
             ServerSok.close();
+            
             return;
         }
         catch (Exception ex)
         {
-            Logger.getLogger(ProxyPlayerManager.class.getName()).log(Level.SEVERE, null, ex);
+            //
         }
 
-        System.out.println(pp.getAddress()+":"+port+" was closed");
+        //System.out.println(pp.getAddress()+":"+port+" was closed");
         
         checkedPort(pp,port,false);
     }
 
-    private void checkedPort(final ProxyPlayer pp,final int port,boolean wasOpen)
+    private void checkedPort(ProxyPlayer pp,final int port,boolean wasOpen)
     {        
         if(wasOpen && pp.getStatus() == ProxyPlayerStatus.UNCHECKED)
         {
@@ -53,6 +58,8 @@ class PortCheckThread implements Runnable
             
             pp.setStatus(ProxyPlayerStatus.DIRTY);
             
+            final ProxyPlayer pp2 = pp;
+            
             plugin.getServer().getScheduler().runTask(plugin, new Runnable()
             {
                 @Override
@@ -61,29 +68,29 @@ class PortCheckThread implements Runnable
                     if(ProxyStopper.AFTER_FOUND_DIRTY_NOTIFY)
                     {
                         plugin.getServer().broadcast(
-                                plugin.getMessagePrefix()+pp.getPlayer().getName()+" has proxy port "+port+" open!",
+                                plugin.getMessagePrefix()+pp2.getPlayer().getName()+" has proxy port "+port+" open!",
                                 "proxystopper.admin");
                     }
                     if(ProxyStopper.AFTER_FOUND_DIRTY_AUTOBAN)
                     {
-                        pp.getPlayer().setBanned(true);
+                        pp2.getPlayer().setBanned(true);
                         
                         plugin.getServer().broadcast(
-                                plugin.getMessagePrefix()+pp.getPlayer().getName()+" was BANNED for having port "+port+" open!",
+                                plugin.getMessagePrefix()+pp2.getPlayer().getName()+" was BANNED for having port "+port+" open!",
                                 "proxystopper.admin");
                     }
                     if(ProxyStopper.AFTER_FOUND_DIRTY_AUTOIPBAN)
                     {
-                        plugin.getServer().banIP(pp.getAddress());
+                        plugin.getServer().banIP(pp2.getAddress());
                         
                         plugin.getServer().broadcast(
-                                plugin.getMessagePrefix()+pp.getPlayer().getName()+" was IP BANNED ("+pp.getAddress()+") for having port "+port+" open!",
+                                plugin.getMessagePrefix()+pp2.getPlayer().getName()+" was IP BANNED ("+pp2.getAddress()+") for having port "+port+" open!",
                                 "proxystopper.admin");
                     }
                     if(ProxyStopper.AFTER_FOUND_DIRTY_AUTOKICK)
                     {
                         plugin.getServer().broadcast(
-                                plugin.getMessagePrefix()+pp.getPlayer().getName()+" was KICKED for having port "+port+" open!",
+                                plugin.getMessagePrefix()+pp2.getPlayer().getName()+" was KICKED for having port "+port+" open!",
                                 "proxystopper.admin");
                     }
                     
@@ -91,16 +98,16 @@ class PortCheckThread implements Runnable
                     || ProxyStopper.AFTER_FOUND_DIRTY_AUTOBAN
                     || ProxyStopper.AFTER_FOUND_DIRTY_AUTOIPBAN)
                     {
-                        plugin.proxyPlayerManager.removeUncleanPlayer(pp.getPlayer());
+                        plugin.proxyPlayerManager.removeUncleanPlayer(pp2.getPlayer());
                         
-                        pp.getPlayer().kickPlayer("You appear to be using a proxy!");
+                        pp2.getPlayer().kickPlayer("You appear to be using a proxy!");
                     }
                 }
             });
         }
         else
         {
-            if(pp.getNumberOfCheckedPorts() == plugin.getProxyPorts().size() 
+            if(pp.getCheckedPortsCount() == plugin.getProxyPorts().size() 
             && pp.getStatus() == ProxyPlayerStatus.UNCHECKED)
             {
                 pp.setStatus(ProxyPlayerStatus.CLEAN);
@@ -110,7 +117,7 @@ class PortCheckThread implements Runnable
 
             pp.getPlayer().sendMessage(
                 plugin.getMessagePrefix()
-                +(pp.getNumberOfCheckedPorts() / plugin.getProxyPorts().size() * 10)
+                +(pp.getCheckedPortsCount() / plugin.getProxyPorts().size() * 10)
                 + "% verified");
         }
     }

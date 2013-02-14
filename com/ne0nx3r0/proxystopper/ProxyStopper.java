@@ -11,11 +11,10 @@ import java.util.logging.Level;
 import net.h31ix.updater.Updater;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class ProxyStopper extends JavaPlugin{
+public class ProxyStopper extends JavaPlugin
+{
     public ProxyPlayerManager proxyPlayerManager;
 
     private List<Integer> PROXY_PORTS;
@@ -67,7 +66,7 @@ public class ProxyStopper extends JavaPlugin{
         AFTER_FOUND_DIRTY_AUTOBAN = afterDirty.getBoolean("auto-ban",false);
         AFTER_FOUND_DIRTY_AUTOIPBAN = afterDirty.getBoolean("auto-ip-ban",false);
 
-        List<Integer> PROXY_PORTS = new ArrayList<Integer>();
+        PROXY_PORTS = new ArrayList<Integer>();
         
         for(String sPort : getConfig().getString("ports").split(","))
         {
@@ -87,7 +86,7 @@ public class ProxyStopper extends JavaPlugin{
         
         if(getConfig().getBoolean("notify-about-updates"))
         {
-            Updater updater = new Updater(this, "anticheat", this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false);
+            Updater updater = new Updater(this, "proxystopper", this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false);
             
             UPDATE_AVAILABLE = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE;
             UPDATE_STRING = updater.getLatestVersionString();

@@ -17,9 +17,6 @@ public class ProxyStopperPlayerListener implements Listener{
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e)
     {   
-        e.getPlayer().sendMessage(plugin.getMessagePrefix()
-                +"Please wait while your connection is checked.");
-
         plugin.proxyPlayerManager.addUncleanPlayer(e.getPlayer());
         
         if(plugin.UPDATE_AVAILABLE)

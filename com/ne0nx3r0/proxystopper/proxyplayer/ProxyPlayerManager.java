@@ -2,9 +2,12 @@ package com.ne0nx3r0.proxystopper.proxyplayer;
 
 import com.ne0nx3r0.proxystopper.ProxyStopper;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -42,9 +45,40 @@ public class ProxyPlayerManager{
         
         this.whitelistedIps = whitelistYml.getStringList("ips");
         
-        int iMoveTicks = p.getConfig().getInt("move-ticks");
+        for(String sIp : whitelistedIps)
+        {
+            if(StringUtils.countMatches(sIp,".") < 3)
+            {
+                whitelistedIps.remove(sIp);
+                
+                plugin.getLogger().log(Level.WARNING,"'"+sIp+"' is an invalid IP!");
+                
+                continue;
+            }
+            
+            for(String sOctet : sIp.split("."))
+            {
+                if(!sOctet.equals("*"))
+                {
+                    try
+                    {
+                        Integer.parseInt(sOctet);
+                    }
+                    catch(Exception e)
+                    {
+                        whitelistedIps.remove(sIp);
+
+                        plugin.getLogger().log(Level.WARNING,"'"+sIp+"' is an invalid IP!");
+
+                        continue;
+                    }
+                }
+            }
+        }
         
-        p.getServer().getScheduler().scheduleSyncRepeatingTask(p, new Runnable()
+        int iMoveTicks = plugin.getConfig().getInt("move-ticks");
+        
+        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(p, new Runnable()
         {
             @Override
             public void run()
@@ -88,9 +122,36 @@ public class ProxyPlayerManager{
     //Unclean!!! Unclean!!!
     public void addUncleanPlayer(Player p)
     {
-        //TODO: Whitelisted IPs
+        String[] sPlayerIp = p.getAddress().getAddress().getHostAddress().split(".");
+        
         if(!this.whitelistedPlayers.contains(p.getName().toLowerCase()))
         {
+            for(String sIp : this.whitelistedIps)
+            {
+                String sOctets = sIp.concat(".");
+                
+                for(int i=0;i<5;i++)
+                {
+                    if(!sOctets.equals("*")
+                    && !sOctets.equals(sPlayerIp[i]))
+                    {
+                        break;
+                    }
+                    
+                    //Matched four times
+                    if(i == 4)
+                    {
+                        p.sendMessage(plugin.getMessagePrefix()
+                                +"Your IP is whitelisted on this server.");
+                        
+                        return;
+                    }
+                }
+            }
+
+            p.sendMessage(plugin.getMessagePrefix()
+                +"Please wait while your connection is checked.");
+
             ProxyPlayer pp = new ProxyPlayer(p);
 
             uncleanPlayers.put(p,pp);
@@ -101,6 +162,11 @@ public class ProxyPlayerManager{
                     plugin,
                     new PortCheckThread(plugin,pp,port));
             }
+        }
+        else
+        {
+            p.sendMessage(plugin.getMessagePrefix()
+                    +"You are whitelisted on this server.");
         }
     }
 

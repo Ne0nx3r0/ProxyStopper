@@ -1,5 +1,6 @@
 #list of port numbers to check
-ports: 8080,80,81,1080,6588,8000,3128,553,554,4480
+ports: 42321,8080,80,81,1080,6588,8000,6673,6668,6667,6666,3127,3128,553,554,4480
+
 
 # ticks between move checks, if enabled (20/second)
 move-ticks: 20

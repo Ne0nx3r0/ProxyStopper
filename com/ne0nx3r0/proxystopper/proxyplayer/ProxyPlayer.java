@@ -25,7 +25,7 @@ public class ProxyPlayer
         numOfPortsChecked++;
     }
     
-    public int getNumberOfCheckedPorts()
+    public int getCheckedPortsCount()
     {
         return numOfPortsChecked;
     }
