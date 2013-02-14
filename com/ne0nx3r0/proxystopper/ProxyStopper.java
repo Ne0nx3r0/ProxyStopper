@@ -11,6 +11,8 @@ import java.util.logging.Level;
 import net.h31ix.updater.Updater;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class ProxyStopper extends JavaPlugin{
@@ -78,20 +80,6 @@ public class ProxyStopper extends JavaPlugin{
                 getLogger().log(Level.WARNING,"'"+sPort + "' Is not a valid port number!");
             }
         }
-        
-        // Whitelist
-        File whitelistFile = new File(this.getDataFolder(), "whitelist.yml");   
-        
-        if(!whitelistFile.exists())
-        {
-            whitelistFile.getParentFile().mkdirs();
-            
-            copy(this.getResource(whitelistFile.getName()), whitelistFile);
-        }
-        
-       // finish whitelist
-        
-        
         
         proxyPlayerManager = new ProxyPlayerManager(this);
         

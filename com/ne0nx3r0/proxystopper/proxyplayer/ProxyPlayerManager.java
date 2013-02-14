@@ -3,31 +3,48 @@ package com.ne0nx3r0.proxystopper.proxyplayer;
 import com.ne0nx3r0.proxystopper.ProxyStopper;
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 public class ProxyPlayerManager{
     private ProxyStopper plugin;
     private Map<Player,ProxyPlayer> uncleanPlayers;
-    
+    private final List<String> whitelistedPlayers;
+    private final List<String> whitelistedIps;
+
     public ProxyPlayerManager(ProxyStopper p)
     {
         plugin = p;
         
         uncleanPlayers = new HashMap<Player,ProxyPlayer>();
         
-        File whitelistFile = new File(plugin.getDataFolder(), "whitelist.yml");   
+        File whitelistFile = new File(p.getDataFolder(), "whitelist.yml");   
         
         if(!whitelistFile.exists())
         {
             whitelistFile.getParentFile().mkdirs();
             
-            plugin.copy(plugin.getResource(whitelistFile.getName()), whitelistFile);
+            p.copy(p.getResource(whitelistFile.getName()), whitelistFile);
         }     
         
-        int iMoveTicks = plugin.getConfig().getInt("move-ticks");
+        FileConfiguration whitelistYml = YamlConfiguration.loadConfiguration(whitelistFile);
         
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable()
+        this.whitelistedPlayers = whitelistYml.getStringList("players");
+        
+        for(String sPlayer : whitelistedPlayers)
+        {
+            whitelistedPlayers.remove(sPlayer);
+            whitelistedPlayers.add(sPlayer.toLowerCase());
+        }
+        
+        this.whitelistedIps = whitelistYml.getStringList("ips");
+        
+        int iMoveTicks = p.getConfig().getInt("move-ticks");
+        
+        p.getServer().getScheduler().scheduleSyncRepeatingTask(p, new Runnable()
         {
             @Override
             public void run()
@@ -71,15 +88,19 @@ public class ProxyPlayerManager{
     //Unclean!!! Unclean!!!
     public void addUncleanPlayer(Player p)
     {
-        ProxyPlayer pp = new ProxyPlayer(p);
-        
-        uncleanPlayers.put(p,pp);
-        
-        for(int port : plugin.getProxyPorts())
+        //TODO: Whitelisted IPs
+        if(!this.whitelistedPlayers.contains(p.getName().toLowerCase()))
         {
-            plugin.getServer().getScheduler().runTaskAsynchronously(
-                plugin,
-                new PortCheckThread(plugin,pp,port));
+            ProxyPlayer pp = new ProxyPlayer(p);
+
+            uncleanPlayers.put(p,pp);
+
+            for(int port : plugin.getProxyPorts())
+            {
+                plugin.getServer().getScheduler().runTaskAsynchronously(
+                    plugin,
+                    new PortCheckThread(plugin,pp,port));
+            }
         }
     }
 
